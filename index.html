@@ -23,11 +23,11 @@
             --font: 'Segoe UI', system-ui, sans-serif;
         }
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;overflow-x:hidden;}
+        body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;overflow-x:hidden;display:flex;flex-direction:column;}
         body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 20%, rgba(168,85,247,0.04) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(59,130,246,0.04) 0%, transparent 50%);pointer-events:none;z-index:0;animation:bgShift 20s infinite;}
         @keyframes bgShift{0%,100%{transform:translate(0,0)}33%{transform:translate(1%,-1%)}66%{transform:translate(-1%,1%)}}
         body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;mask-image:radial-gradient(ellipse at center, black 30%, transparent 70%);}
-        .container{max-width:1300px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+        .container{max-width:1300px;margin:0 auto;padding:0 24px;position:relative;z-index:1;flex:1;}
         .header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.75);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);padding:16px 0;}
         .header.scrolled{box-shadow:0 4px 30px rgba(0,0,0,0.5);border-bottom-color:rgba(255,255,255,0.1);}
         .header-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
@@ -79,18 +79,32 @@
         .empty-state{text-align:center;padding:60px 20px;grid-column:1/-1;}
         .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s;}
         .modal-overlay.active{opacity:1;pointer-events:all;}
-        .modal{background:var(--bg2);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);width:100%;max-width:700px;max-height:85vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,0.5);transform:translateY(20px) scale(0.96);transition:transform 0.35s;}
+        .modal{background:var(--bg2);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);width:100%;max-width:750px;max-height:85vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,0.5);transform:translateY(20px) scale(0.96);transition:transform 0.35s;}
         .modal-overlay.active .modal{transform:translateY(0) scale(1);}
         .modal-header{position:sticky;top:0;background:var(--bg2);padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;z-index:10;}
         .modal-close{width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,0.05);color:#fff;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;}
         .modal-body{padding:24px;}
         .detail-img{width:100%;height:250px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:20px;background:var(--bg3);}
+        .gallery-container{position:relative;margin-bottom:20px;border-radius:var(--radius-sm);overflow:hidden;background:var(--bg3);}
+        .gallery-img{width:100%;height:280px;object-fit:cover;display:block;}
+        .gallery-controls{position:absolute;top:50%;transform:translateY(-50%);width:100%;display:flex;justify-content:space-between;padding:0 10px;pointer-events:none;}
+        .gallery-btn{pointer-events:all;background:rgba(0,0,0,0.6);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:1.5rem;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition);}
+        .gallery-btn:hover{background:rgba(168,85,247,0.6);border-color:var(--accent);}
+        .gallery-dots{display:flex;justify-content:center;gap:8px;margin-top:10px;}
+        .gallery-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);cursor:pointer;transition:var(--transition);}
+        .gallery-dot.active{background:var(--accent);box-shadow:0 0 8px var(--accent-glow);}
         .detail-meta-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));gap:12px;margin-bottom:20px;}
         .detail-meta-item{background:var(--bg3);padding:14px;border-radius:var(--radius-xs);text-align:center;}
         .meta-val{font-weight:700;color:#fff;}
         .meta-lbl{font-size:0.7rem;color:var(--text3);text-transform:uppercase;}
         .detail-desc{color:var(--text2);line-height:1.7;margin-bottom:20px;}
-        @media(max-width:768px){.post-grid{grid-template-columns:1fr;}.header-inner{gap:12px;}.search-wrap{order:3;max-width:100%;flex:100%;}}
+        .footer{background:rgba(10,10,15,0.8);border-top:1px solid rgba(255,255,255,0.05);padding:30px 0 20px;margin-top:40px;position:relative;z-index:1;}
+        .footer-content{max-width:1300px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+        .footer-text{color:var(--text3);font-size:0.85rem;}
+        .footer-links{display:flex;gap:20px;}
+        .footer-links a{color:var(--text2);text-decoration:none;font-size:0.85rem;transition:var(--transition);}
+        .footer-links a:hover{color:var(--accent);}
+        @media(max-width:768px){.post-grid{grid-template-columns:1fr;}.header-inner{gap:12px;}.search-wrap{order:3;max-width:100%;flex:100%;}.footer-content{flex-direction:column;text-align:center;}}
     </style>
 </head>
 <body>
@@ -134,6 +148,17 @@
         <div class="post-grid" id="postGrid"></div>
     </main>
 
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-text">© 2025 ModHub. Katalog aplikasi mod terpercaya.</div>
+            <div class="footer-links">
+                <a href="#">Tentang</a>
+                <a href="#">Kebijakan</a>
+                <a href="#">Kontak</a>
+            </div>
+        </div>
+    </footer>
+
     <div class="modal-overlay" id="detailModalOverlay">
         <div class="modal">
             <div class="modal-header">
@@ -148,32 +173,23 @@
         const STORAGE_KEY = 'modhub_data';
         const ADMIN_PASSWORD = 'admin123';
 
-        // Data default tanpa kategori game, plus contoh gambar (placeholder)
         const defaultModData = [
             { name:"WhatsApp Aero Mod", category:"social", version:"v10.20", developer:"AeroDev", rating:4.8,
               description:"WhatsApp dengan tema kustom, anti-banned, privasi lengkap.",
               fullDescription:"Modifikasi WhatsApp populer dengan ribuan tema, font kustom, kemampuan menyembunyikan centang biru, status online, dan fitur privasi canggih. Anti-banned terbaru.",
               downloadLink:"https://example.com/wa-aero", downloadCount:12500,
               tags:["premium","anti-banned","tema","privasi"],
-              image:"https://picsum.photos/seed/whatsapp/400/200" },
+              image:"https://picsum.photos/seed/whatsapp/400/200",
+              images:["https://picsum.photos/seed/wa1/600/400","https://picsum.photos/seed/wa2/600/400","https://picsum.photos/seed/wa3/600/400"],
+              icon:"" },
             { name:"Spotify Premium Mod", category:"multimedia", version:"v8.9.80", developer:"SpotifyMods", rating:4.6,
               description:"Spotify Premium gratis, tanpa iklan, download offline.",
               fullDescription:"Streaming jutaan lagu tanpa iklan, download offline kualitas tinggi, unlimited skip, semua fitur premium terbuka. Tidak perlu root.",
               downloadLink:"https://example.com/spotify-premium", downloadCount:24300,
               tags:["premium","no-ads","offline","unlocked"],
-              image:"https://picsum.photos/seed/spotify/400/200" },
-            { name:"CapCut Pro Mod", category:"multimedia", version:"v12.5.0", developer:"CapPro", rating:4.7,
-              description:"Editor video tanpa watermark, semua efek pro terbuka.",
-              fullDescription:"CapCut Pro Mod dengan akses penuh template premium, efek transisi eksklusif, keyframe animation, ekspor 4K tanpa watermark. Ideal untuk content creator.",
-              downloadLink:"https://example.com/capcut-pro", downloadCount:18900,
-              tags:["pro","no-watermark","4k","editor"],
-              image:"https://picsum.photos/seed/capcut/400/200" },
-            { name:"Adobe Lightroom Mod", category:"multimedia", version:"v9.5.1", developer:"LrModder", rating:4.5,
-              description:"Lightroom premium, preset & healing brush terbuka.",
-              fullDescription:"Adobe Lightroom versi mod dengan semua fitur premium: preset eksklusif, healing brush, selective adjustment, cloud storage. Edit foto profesional dari HP.",
-              downloadLink:"https://example.com/lightroom-mod", downloadCount:15600,
-              tags:["premium","preset","healing","foto"],
-              image:"" }  // tanpa gambar -> tampil ikon
+              image:"https://picsum.photos/seed/spotify/400/200",
+              images:["https://picsum.photos/seed/sp1/600/400","https://picsum.photos/seed/sp2/600/400"],
+              icon:"🎵" }
         ];
 
         let posts = [];
@@ -213,13 +229,14 @@
                 grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><h3>Tidak ditemukan</h3><p>Coba filter atau kata kunci lain.</p></div>`;
             } else {
                 grid.innerHTML = filtered.map(p => {
-                    const emoji = getCategoryEmoji(p.category);
                     const bgStyle = p.image ? `background-image:url('${escapeHTML(p.image)}'); background-size:cover;` : '';
-                    const iconHtml = p.image ? '' : `<span class="banner-icon">${emoji}</span>`;
+                    const iconContent = p.icon 
+                        ? (p.icon.match(/^https?:\/\//) ? `<img src="${escapeHTML(p.icon)}" style="width:60px;height:60px;object-fit:contain;" alt="icon">` : `<span class="banner-icon" style="font-size:3rem;">${escapeHTML(p.icon)}</span>`)
+                        : (!p.image ? `<span class="banner-icon">${getCategoryEmoji(p.category)}</span>` : '');
                     const tagsHtml = (p.tags||[]).slice(0,3).map(t=>`<span class="tag">#${escapeHTML(t)}</span>`).join('');
                     return `<div class="post-card" onclick="openDetail('${p.id}')">
                         <div class="card-banner" style="${bgStyle}">
-                            ${iconHtml}
+                            ${iconContent}
                             <span class="index-badge">#${String(p.index).padStart(3,'0')}</span>
                             <span class="category-badge">${getCategoryLabel(p.category)}</span>
                         </div>
@@ -250,11 +267,35 @@
         function openDetail(id) {
             const post = posts.find(p=>p.id===id); if(!post) return;
             document.getElementById('detailModalTitle').textContent = `#${String(post.index).padStart(3,'0')} - ${post.name}`;
-            const imgTag = post.image 
-                ? `<img src="${escapeHTML(post.image)}" alt="${escapeHTML(post.name)}" class="detail-img" onerror="this.style.display='none'">`
-                : `<div class="detail-img" style="display:flex;align-items:center;justify-content:center;font-size:5rem;color:rgba(255,255,255,0.1);">${getCategoryEmoji(post.category)}</div>`;
+            
+            // Siapkan gambar utama / galeri
+            let imageSection = '';
+            const images = post.images && post.images.length ? post.images : (post.image ? [post.image] : []);
+            if(images.length > 1) {
+                // Galeri interaktif
+                const imageItems = images.map((img, idx) => 
+                    `<img src="${escapeHTML(img)}" class="gallery-img" style="display:${idx===0?'block':'none'};" onerror="this.style.display='none'" alt="gambar ${idx+1}">`
+                ).join('');
+                const dots = images.map((_, idx) => 
+                    `<span class="gallery-dot ${idx===0?'active':''}" onclick="changeGalleryImage(${idx})"></span>`
+                ).join('');
+                imageSection = `
+                <div class="gallery-container" id="galleryContainer">
+                    ${imageItems}
+                    <div class="gallery-controls">
+                        <button class="gallery-btn" onclick="prevGalleryImage()">‹</button>
+                        <button class="gallery-btn" onclick="nextGalleryImage()">›</button>
+                    </div>
+                </div>
+                <div class="gallery-dots">${dots}</div>`;
+            } else if(images.length === 1) {
+                imageSection = `<img src="${escapeHTML(images[0])}" class="detail-img" onerror="this.style.display='none'" alt="${escapeHTML(post.name)}">`;
+            } else {
+                imageSection = `<div class="detail-img" style="display:flex;align-items:center;justify-content:center;font-size:5rem;color:rgba(255,255,255,0.1);">${getCategoryEmoji(post.category)}</div>`;
+            }
+
             document.getElementById('detailModalBody').innerHTML = `
-                ${imgTag}
+                ${imageSection}
                 <div class="detail-meta-grid">
                     <div class="detail-meta-item"><div class="meta-val">⭐ ${(post.rating||0).toFixed(1)}</div><div class="meta-lbl">Rating</div></div>
                     <div class="detail-meta-item"><div class="meta-val">${escapeHTML(post.version)}</div><div class="meta-lbl">Versi</div></div>
@@ -267,8 +308,40 @@
                 ${(post.tags||[]).length ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">${post.tags.map(t=>`<span class="tag">#${escapeHTML(t)}</span>`).join('')}</div>` : ''}
                 ${post.downloadLink ? `<a href="${escapeHTML(post.downloadLink)}" target="_blank" class="btn btn-primary" style="display:inline-flex;margin-top:8px;">⬇️ Download Mod</a>` : '<span style="opacity:0.6;">🔗 Link tidak tersedia</span>'}
             `;
+
+            // Simpan data galeri sementara
+            window._currentGalleryImages = images;
+            window._currentGalleryIdx = 0;
+
             document.getElementById('detailModalOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
+        }
+
+        function changeGalleryImage(idx) {
+            if(!window._currentGalleryImages) return;
+            const images = window._currentGalleryImages;
+            if(idx < 0 || idx >= images.length) return;
+            window._currentGalleryIdx = idx;
+            document.querySelectorAll('#detailModalBody .gallery-img').forEach((img, i) => {
+                img.style.display = i === idx ? 'block' : 'none';
+            });
+            document.querySelectorAll('#detailModalBody .gallery-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === idx);
+            });
+        }
+
+        function prevGalleryImage() {
+            if(!window._currentGalleryImages) return;
+            const len = window._currentGalleryImages.length;
+            const newIdx = (window._currentGalleryIdx - 1 + len) % len;
+            changeGalleryImage(newIdx);
+        }
+
+        function nextGalleryImage() {
+            if(!window._currentGalleryImages) return;
+            const len = window._currentGalleryImages.length;
+            const newIdx = (window._currentGalleryIdx + 1) % len;
+            changeGalleryImage(newIdx);
         }
 
         function closeDetailModal() {
@@ -291,7 +364,6 @@
             renderPosts();
         }
 
-        // Admin visibility
         function checkAdminUI() {
             const isAdmin = sessionStorage.getItem('admin') === 'true';
             document.getElementById('adminButtons').style.display = isAdmin ? 'flex' : 'none';
@@ -303,18 +375,15 @@
             alert('Logout berhasil.');
         }
 
-        // Category helpers (tanpa game)
         function getCategoryEmoji(cat){ const m={tool:'🔧', social:'💬', multimedia:'🎬', productivity:'📋', other:'📎'}; return m[cat]||'📱'; }
         function getCategoryLabel(cat){ const m={tool:'Tools', social:'Sosial', multimedia:'Multimedia', productivity:'Produktivitas', other:'Lainnya'}; return m[cat]||'Lainnya'; }
         function formatNumber(n){ if(n>=1e6) return (n/1e6).toFixed(1)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return n.toString(); }
         function escapeHTML(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
 
-        // Event listeners
         document.getElementById('detailModalOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeDetailModal(); });
         document.addEventListener('keydown', e => { if(e.key==='Escape') closeDetailModal(); });
         window.addEventListener('scroll', () => document.getElementById('header').classList.toggle('scrolled', window.scrollY>20));
 
-        // Init
         loadPosts();
         savePosts();
         renderPosts();
