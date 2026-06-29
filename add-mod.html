@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Mod - Admin ModHub</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg2: #12121a;
+            --bg3: #1a1a28;
+            --accent: #a855f7;
+            --accent2: #7c3aed;
+            --text: #e2e8f0;
+            --text2: #a1a1aa;
+            --radius: 16px;
+            --radius-xs: 8px;
+            --transition: 0.3s ease;
+            --font: 'Segoe UI', system-ui, sans-serif;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+        body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 20%, rgba(168,85,247,0.04), transparent 50%);pointer-events:none;z-index:0;}
+        .form-container{position:relative;z-index:1;width:100%;max-width:600px;background:var(--bg2);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:30px;box-shadow:0 25px 50px rgba(0,0,0,0.5);}
+        h1{font-size:1.6rem;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
+        .form-group{margin-bottom:18px;}
+        label{display:block;font-weight:600;font-size:0.85rem;margin-bottom:6px;}
+        input, textarea, select{width:100%;padding:12px 16px;border-radius:var(--radius-xs);border:1.5px solid rgba(255,255,255,0.1);background:var(--bg3);color:var(--text);font-size:0.9rem;font-family:var(--font);transition:var(--transition);outline:none;}
+        input:focus, textarea:focus, select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(168,85,247,0.1);}
+        .form-row{display:flex;gap:12px;flex-wrap:wrap;}
+        .form-row .form-group{flex:1;min-width:140px;}
+        .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:50px;border:none;cursor:pointer;font-weight:600;font-size:0.9rem;transition:var(--transition);text-decoration:none;font-family:var(--font);}
+        .btn-primary{background:linear-gradient(135deg, var(--accent), var(--accent2));color:#fff;}
+        .btn-outline{background:transparent;border:1.5px solid rgba(255,255,255,0.25);color:var(--text);}
+        .btn-outline:hover{border-color:var(--accent);}
+        .form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;flex-wrap:wrap;}
+        @media(max-width:500px){.form-container{padding:20px;}}
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>⚡ Tambah Mod Baru (Admin)</h1>
+        <form id="modForm">
+            <div class="form-group"><label>📱 Nama Aplikasi *</label><input type="text" id="name" required maxlength="80"></div>
+            <div class="form-row">
+                <div class="form-group"><label>🏷️ Kategori *</label><select id="category" required><option value="">Pilih...</option><option value="game">🎮 Game</option><option value="tool">🔧 Tools</option><option value="social">💬 Sosial</option><option value="multimedia">🎬 Multimedia</option><option value="productivity">📋 Produktivitas</option><option value="other">📎 Lainnya</option></select></div>
+                <div class="form-group"><label>🔢 Versi *</label><input type="text" id="version" required maxlength="20"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>👨‍💻 Developer</label><input type="text" id="developer" maxlength="60"></div>
+                <div class="form-group"><label>⭐ Rating</label><input type="number" id="rating" min="0" max="5" step="0.1" value="4.5"></div>
+            </div>
+            <div class="form-group"><label>📝 Deskripsi Singkat *</label><textarea id="description" rows="2" required maxlength="200"></textarea></div>
+            <div class="form-group"><label>📄 Deskripsi Lengkap</label><textarea id="fullDescription" rows="4" maxlength="2000"></textarea></div>
+            <div class="form-row">
+                <div class="form-group"><label>🔗 Link Download</label><input type="url" id="downloadLink"></div>
+                <div class="form-group"><label>⬇️ Jumlah Download</label><input type="number" id="downloadCount" value="0" min="0"></div>
+            </div>
+            <div class="form-group"><label>🏷️ Tags (koma)</label><input type="text" id="tags" maxlength="150"></div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-outline" onclick="logout()">🚪 Logout</button>
+                <a href="index.html" class="btn btn-outline">← Kembali</a>
+                <button type="submit" class="btn btn-primary">💾 Simpan Mod</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Cek akses admin
+        if (sessionStorage.getItem('admin') !== 'true') {
+            alert('Akses ditolak! Halaman ini hanya untuk admin.');
+            window.location.href = 'index.html';
+        }
+
+        const STORAGE_KEY = 'modhub_data';
+        const defaultModData = [
+            { name:"WhatsApp Aero Mod", category:"social", version:"v10.20", developer:"AeroDev", rating:4.8, description:"...", fullDescription:"...", downloadLink:"", downloadCount:12500, tags:["premium"] },
+            { name:"Spotify Premium Mod", category:"multimedia", version:"v8.9.80", developer:"SpotifyMods", rating:4.6, description:"...", fullDescription:"...", downloadLink:"", downloadCount:24300, tags:["no-ads"] }
+        ];
+
+        function loadExisting() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : defaultModData.map((p,i) => ({...p, id:'mod_'+i+'_'+Date.now()}));
+        }
+
+        document.getElementById('modForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const category = document.getElementById('category').value;
+            if (!name || !category) return alert('Nama dan kategori wajib!');
+
+            const newMod = {
+                id: 'mod_' + Date.now(),
+                name, category,
+                version: document.getElementById('version').value.trim(),
+                developer: document.getElementById('developer').value.trim() || 'Unknown',
+                rating: parseFloat(document.getElementById('rating').value) || 0,
+                description: document.getElementById('description').value.trim(),
+                fullDescription: document.getElementById('fullDescription').value.trim(),
+                downloadLink: document.getElementById('downloadLink').value.trim(),
+                downloadCount: parseInt(document.getElementById('downloadCount').value) || 0,
+                tags: document.getElementById('tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+                createdAt: new Date().toISOString()
+            };
+
+            const posts = loadExisting();
+            posts.unshift(newMod);
+            posts.forEach((p,i) => p.index = i+1);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+
+            alert('✅ Mod berhasil ditambahkan!');
+            window.location.href = 'index.html';
+        });
+
+        function logout() {
+            sessionStorage.removeItem('admin');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
