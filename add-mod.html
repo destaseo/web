@@ -21,7 +21,7 @@
         *{margin:0;padding:0;box-sizing:border-box;}
         body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
         body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 20%, rgba(168,85,247,0.04), transparent 50%);pointer-events:none;z-index:0;}
-        .form-container{position:relative;z-index:1;width:100%;max-width:600px;background:var(--bg2);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:30px;box-shadow:0 25px 50px rgba(0,0,0,0.5);}
+        .form-container{position:relative;z-index:1;width:100%;max-width:650px;background:var(--bg2);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:30px;box-shadow:0 25px 50px rgba(0,0,0,0.5);}
         h1{font-size:1.6rem;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
         .form-group{margin-bottom:18px;}
         label{display:block;font-weight:600;font-size:0.85rem;margin-bottom:6px;}
@@ -34,7 +34,7 @@
         .btn-outline{background:transparent;border:1.5px solid rgba(255,255,255,0.25);color:var(--text);}
         .btn-outline:hover{border-color:var(--accent);}
         .form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;flex-wrap:wrap;}
-        .image-preview{width:100%;height:150px;border-radius:var(--radius-xs);background:var(--bg3);margin-top:8px;display:flex;align-items:center;justify-content:center;color:var(--text3);background-size:cover;background-position:center;transition:var(--transition);}
+        .image-preview{width:100%;height:120px;border-radius:var(--radius-xs);background:var(--bg3);margin-top:8px;display:flex;align-items:center;justify-content:center;color:var(--text3);background-size:contain;background-repeat:no-repeat;background-position:center;transition:var(--transition);}
         @media(max-width:500px){.form-container{padding:20px;}}
     </style>
 </head>
@@ -65,11 +65,23 @@
                 <div class="form-group"><label>⬇️ Jumlah Download</label><input type="number" id="downloadCount" value="0" min="0"></div>
             </div>
             <div class="form-group"><label>🏷️ Tags (pisahkan koma)</label><input type="text" id="tags" maxlength="150"></div>
+            
             <div class="form-group">
-                <label>🖼️ URL Gambar (opsional)</label>
+                <label>🖼️ URL Gambar Banner (opsional)</label>
                 <input type="url" id="imageUrl" placeholder="https://...">
-                <div class="image-preview" id="imagePreview">🔍 Preview gambar</div>
+                <div class="image-preview" id="imagePreview">🔍 Preview banner</div>
             </div>
+
+            <div class="form-group">
+                <label>🖼️ Gambar Galeri Detail (URL, pisahkan dengan baris baru, max 5)</label>
+                <textarea id="galleryImages" rows="3" placeholder="https://...&#10;https://...&#10;https://..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>🌟 Icon Index (emoji atau URL ikon kecil, opsional)</label>
+                <input type="text" id="iconInput" placeholder="🎯 atau https://...">
+            </div>
+
             <div class="form-actions">
                 <button type="button" class="btn btn-outline" onclick="logoutAdmin()">🚪 Logout</button>
                 <a href="index.html" class="btn btn-outline">← Kembali</a>
@@ -85,14 +97,14 @@
         }
 
         const STORAGE_KEY = 'modhub_data';
-        const defaultModData = [ /* sama seperti di index */ ];
+        const defaultModData = [ /* fallback */ ];
 
         function loadExisting() {
             const stored = localStorage.getItem(STORAGE_KEY);
             return stored ? JSON.parse(stored) : defaultModData.map((p,i) => ({...p, id:'mod_'+i+'_'+Date.now()}));
         }
 
-        // Preview gambar
+        // Preview banner
         document.getElementById('imageUrl').addEventListener('input', function(){
             const url = this.value.trim();
             const preview = document.getElementById('imagePreview');
@@ -101,7 +113,7 @@
                 preview.textContent = '';
             } else {
                 preview.style.backgroundImage = '';
-                preview.textContent = '🔍 Preview gambar';
+                preview.textContent = '🔍 Preview banner';
             }
         });
 
@@ -110,6 +122,9 @@
             const name = document.getElementById('name').value.trim();
             const category = document.getElementById('category').value;
             if (!name || !category) return alert('Nama dan kategori wajib!');
+
+            const galleryRaw = document.getElementById('galleryImages').value.trim();
+            const galleryArray = galleryRaw ? galleryRaw.split('\n').map(u => u.trim()).filter(Boolean).slice(0,5) : [];
 
             const newMod = {
                 id: 'mod_' + Date.now(),
@@ -123,6 +138,8 @@
                 downloadCount: parseInt(document.getElementById('downloadCount').value) || 0,
                 tags: document.getElementById('tags').value.split(',').map(t=>t.trim()).filter(Boolean),
                 image: document.getElementById('imageUrl').value.trim(),
+                images: galleryArray,
+                icon: document.getElementById('iconInput').value.trim(),
                 createdAt: new Date().toISOString()
             };
 
@@ -139,6 +156,9 @@
             sessionStorage.removeItem('admin');
             window.location.href = 'index.html';
         }
+    </script>
+</body>
+</html>        }
     </script>
 </body>
 </html>
