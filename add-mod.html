@@ -29,11 +29,12 @@
         input:focus, textarea:focus, select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(168,85,247,0.1);}
         .form-row{display:flex;gap:12px;flex-wrap:wrap;}
         .form-row .form-group{flex:1;min-width:140px;}
-        .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:50px;border:none;cursor:pointer;font-weight:600;font-size:0.9rem;transition:var(--transition);text-decoration:none;font-family:var(--font);}
+        .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:50px;border:none;cursor:pointer;font-weight:600;font-size:0.9rem;transition:var(--transition);text-decoration:none;font-family:var(--font);}
         .btn-primary{background:linear-gradient(135deg, var(--accent), var(--accent2));color:#fff;}
         .btn-outline{background:transparent;border:1.5px solid rgba(255,255,255,0.25);color:var(--text);}
         .btn-outline:hover{border-color:var(--accent);}
         .form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;flex-wrap:wrap;}
+        .image-preview{width:100%;height:150px;border-radius:var(--radius-xs);background:var(--bg3);margin-top:8px;display:flex;align-items:center;justify-content:center;color:var(--text3);background-size:cover;background-position:center;transition:var(--transition);}
         @media(max-width:500px){.form-container{padding:20px;}}
     </style>
 </head>
@@ -43,7 +44,14 @@
         <form id="modForm">
             <div class="form-group"><label>📱 Nama Aplikasi *</label><input type="text" id="name" required maxlength="80"></div>
             <div class="form-row">
-                <div class="form-group"><label>🏷️ Kategori *</label><select id="category" required><option value="">Pilih...</option><option value="game">🎮 Game</option><option value="tool">🔧 Tools</option><option value="social">💬 Sosial</option><option value="multimedia">🎬 Multimedia</option><option value="productivity">📋 Produktivitas</option><option value="other">📎 Lainnya</option></select></div>
+                <div class="form-group"><label>🏷️ Kategori *</label><select id="category" required>
+                    <option value="">Pilih...</option>
+                    <option value="tool">🔧 Tools</option>
+                    <option value="social">💬 Sosial</option>
+                    <option value="multimedia">🎬 Multimedia</option>
+                    <option value="productivity">📋 Produktivitas</option>
+                    <option value="other">📎 Lainnya</option>
+                </select></div>
                 <div class="form-group"><label>🔢 Versi *</label><input type="text" id="version" required maxlength="20"></div>
             </div>
             <div class="form-row">
@@ -56,9 +64,14 @@
                 <div class="form-group"><label>🔗 Link Download</label><input type="url" id="downloadLink"></div>
                 <div class="form-group"><label>⬇️ Jumlah Download</label><input type="number" id="downloadCount" value="0" min="0"></div>
             </div>
-            <div class="form-group"><label>🏷️ Tags (koma)</label><input type="text" id="tags" maxlength="150"></div>
+            <div class="form-group"><label>🏷️ Tags (pisahkan koma)</label><input type="text" id="tags" maxlength="150"></div>
+            <div class="form-group">
+                <label>🖼️ URL Gambar (opsional)</label>
+                <input type="url" id="imageUrl" placeholder="https://...">
+                <div class="image-preview" id="imagePreview">🔍 Preview gambar</div>
+            </div>
             <div class="form-actions">
-                <button type="button" class="btn btn-outline" onclick="logout()">🚪 Logout</button>
+                <button type="button" class="btn btn-outline" onclick="logoutAdmin()">🚪 Logout</button>
                 <a href="index.html" class="btn btn-outline">← Kembali</a>
                 <button type="submit" class="btn btn-primary">💾 Simpan Mod</button>
             </div>
@@ -66,22 +79,31 @@
     </div>
 
     <script>
-        // Cek akses admin
         if (sessionStorage.getItem('admin') !== 'true') {
-            alert('Akses ditolak! Halaman ini hanya untuk admin.');
+            alert('Akses ditolak! Hanya admin.');
             window.location.href = 'index.html';
         }
 
         const STORAGE_KEY = 'modhub_data';
-        const defaultModData = [
-            { name:"WhatsApp Aero Mod", category:"social", version:"v10.20", developer:"AeroDev", rating:4.8, description:"...", fullDescription:"...", downloadLink:"", downloadCount:12500, tags:["premium"] },
-            { name:"Spotify Premium Mod", category:"multimedia", version:"v8.9.80", developer:"SpotifyMods", rating:4.6, description:"...", fullDescription:"...", downloadLink:"", downloadCount:24300, tags:["no-ads"] }
-        ];
+        const defaultModData = [ /* sama seperti di index */ ];
 
         function loadExisting() {
             const stored = localStorage.getItem(STORAGE_KEY);
             return stored ? JSON.parse(stored) : defaultModData.map((p,i) => ({...p, id:'mod_'+i+'_'+Date.now()}));
         }
+
+        // Preview gambar
+        document.getElementById('imageUrl').addEventListener('input', function(){
+            const url = this.value.trim();
+            const preview = document.getElementById('imagePreview');
+            if(url) {
+                preview.style.backgroundImage = `url('${url}')`;
+                preview.textContent = '';
+            } else {
+                preview.style.backgroundImage = '';
+                preview.textContent = '🔍 Preview gambar';
+            }
+        });
 
         document.getElementById('modForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -100,6 +122,7 @@
                 downloadLink: document.getElementById('downloadLink').value.trim(),
                 downloadCount: parseInt(document.getElementById('downloadCount').value) || 0,
                 tags: document.getElementById('tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+                image: document.getElementById('imageUrl').value.trim(),
                 createdAt: new Date().toISOString()
             };
 
@@ -112,7 +135,7 @@
             window.location.href = 'index.html';
         });
 
-        function logout() {
+        function logoutAdmin() {
             sessionStorage.removeItem('admin');
             window.location.href = 'index.html';
         }
