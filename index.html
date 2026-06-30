@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ModHub - Katalog Aplikasi Mod</title>
+    <title>Destaseo Mods - Katalog Aplikasi Mod</title>
     <style>
         :root {
             --bg: #0a0a0f;
@@ -73,8 +73,11 @@
         .card-title{font-size:1.15rem;font-weight:700;color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
         .card-desc{font-size:0.85rem;color:var(--text2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
         .card-meta{display:flex;gap:16px;flex-wrap:wrap;font-size:0.78rem;color:var(--text3);margin-top:auto;padding-top:8px;}
+        .clickable-dev{cursor:pointer;color:var(--accent);font-weight:500;transition:var(--transition);}
+        .clickable-dev:hover{color:#c084fc;text-decoration:underline;}
         .card-footer{display:flex;gap:8px;padding:0 20px 18px;flex-wrap:wrap;}
-        .tag{font-size:0.7rem;padding:5px 10px;border-radius:50px;background:rgba(255,255,255,0.04);color:var(--text3);border:1px solid rgba(255,255,255,0.08);}
+        .tag{font-size:0.7rem;padding:5px 10px;border-radius:50px;background:rgba(255,255,255,0.04);color:var(--text3);border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:var(--transition);}
+        .tag:hover{background:rgba(255,255,255,0.1);color:#fff;}
         .version-tag{background:rgba(59,130,246,0.15);color:#93c5fd;}
         .empty-state{text-align:center;padding:60px 20px;grid-column:1/-1;}
         .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s;}
@@ -150,11 +153,11 @@
 
     <footer class="footer">
         <div class="footer-content">
-            <div class="footer-text">© 2025 ModHub. Katalog aplikasi mod terpercaya.</div>
+            <div class="footer-text">© 2026 Destaseo Mods. Katalog aplikasi mod terpercaya.</div>
             <div class="footer-links">
-                <a href="#">Tentang</a>
-                <a href="#">Kebijakan</a>
-                <a href="#">Kontak</a>
+                <a href="tentang.html">Tentang</a>
+                <a href="kebijakan.html">Kebijakan</a>
+                <a href="kontak.html">Kontak</a>
             </div>
         </div>
     </footer>
@@ -176,19 +179,19 @@
         const defaultModData = [
             { name:"WhatsApp Aero Mod", category:"social", version:"v10.20", developer:"AeroDev", rating:4.8,
               description:"WhatsApp dengan tema kustom, anti-banned, privasi lengkap.",
-              fullDescription:"Modifikasi WhatsApp populer dengan ribuan tema, font kustom, kemampuan menyembunyikan centang biru, status online, dan fitur privasi canggih. Anti-banned terbaru.",
+              fullDescription:"Modifikasi WhatsApp populer dengan ribuan tema, font kustom, kemampuan menyembunyikan centang biru, status online, dan fitur privasi canggih.",
               downloadLink:"https://example.com/wa-aero", downloadCount:12500,
               tags:["premium","anti-banned","tema","privasi"],
               image:"https://picsum.photos/seed/whatsapp/400/200",
-              images:["https://picsum.photos/seed/wa1/600/400","https://picsum.photos/seed/wa2/600/400","https://picsum.photos/seed/wa3/600/400"],
+              images:["https://picsum.photos/seed/wa1/600/400","https://picsum.photos/seed/wa2/600/400"],
               icon:"" },
             { name:"Spotify Premium Mod", category:"multimedia", version:"v8.9.80", developer:"SpotifyMods", rating:4.6,
               description:"Spotify Premium gratis, tanpa iklan, download offline.",
-              fullDescription:"Streaming jutaan lagu tanpa iklan, download offline kualitas tinggi, unlimited skip, semua fitur premium terbuka. Tidak perlu root.",
+              fullDescription:"Streaming jutaan lagu tanpa iklan, download offline kualitas tinggi, unlimited skip.",
               downloadLink:"https://example.com/spotify-premium", downloadCount:24300,
               tags:["premium","no-ads","offline","unlocked"],
               image:"https://picsum.photos/seed/spotify/400/200",
-              images:["https://picsum.photos/seed/sp1/600/400","https://picsum.photos/seed/sp2/600/400"],
+              images:["https://picsum.photos/seed/sp1/600/400"],
               icon:"🎵" }
         ];
 
@@ -226,14 +229,16 @@
             const grid = document.getElementById('postGrid');
             const filtered = getFilteredPosts();
             if(!filtered.length) {
-                grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><h3>Tidak ditemukan</h3><p>Coba filter atau kata kunci lain.</p></div>`;
+                grid.innerHTML = `<div class="empty-state"><div style="font-size:4rem;opacity:0.3;">📭</div><h3>Tidak ditemukan</h3><p>Coba ubah filter atau kata kunci.</p></div>`;
             } else {
                 grid.innerHTML = filtered.map(p => {
                     const bgStyle = p.image ? `background-image:url('${escapeHTML(p.image)}'); background-size:cover;` : '';
                     const iconContent = p.icon 
                         ? (p.icon.match(/^https?:\/\//) ? `<img src="${escapeHTML(p.icon)}" style="width:60px;height:60px;object-fit:contain;" alt="icon">` : `<span class="banner-icon" style="font-size:3rem;">${escapeHTML(p.icon)}</span>`)
                         : (!p.image ? `<span class="banner-icon">${getCategoryEmoji(p.category)}</span>` : '');
-                    const tagsHtml = (p.tags||[]).slice(0,3).map(t=>`<span class="tag">#${escapeHTML(t)}</span>`).join('');
+                    const tagsHtml = (p.tags||[]).slice(0,3).map(t=>
+                        `<span class="tag" onclick="event.stopPropagation(); searchByTag('${escapeHTML(t)}')">#${escapeHTML(t)}</span>`
+                    ).join('');
                     return `<div class="post-card" onclick="openDetail('${p.id}')">
                         <div class="card-banner" style="${bgStyle}">
                             ${iconContent}
@@ -245,7 +250,7 @@
                             <p class="card-desc">${escapeHTML(p.description || '')}</p>
                             <div class="card-meta">
                                 <span>⭐ ${(p.rating||0).toFixed(1)}</span>
-                                <span>👤 ${escapeHTML(p.developer||'')}</span>
+                                <span class="clickable-dev" onclick="event.stopPropagation(); searchDeveloper('${escapeHTML(p.developer||'')}')">👤 ${escapeHTML(p.developer||'')}</span>
                                 <span>⬇️ ${formatNumber(p.downloadCount||0)}</span>
                             </div>
                         </div>
@@ -264,15 +269,35 @@
             document.getElementById('statCategories').textContent = s.categoriesCount;
         }
 
+        function searchByTag(tag) {
+            if (!tag) return;
+            document.getElementById('searchInput').value = tag;
+            currentCategory = 'all';
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            const allChip = document.querySelector('.chip[data-category="all"]');
+            if (allChip) allChip.classList.add('active');
+            renderPosts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function searchDeveloper(devName) {
+            if (!devName) return;
+            document.getElementById('searchInput').value = devName;
+            currentCategory = 'all';
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            const allChip = document.querySelector('.chip[data-category="all"]');
+            if (allChip) allChip.classList.add('active');
+            renderPosts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function openDetail(id) {
             const post = posts.find(p=>p.id===id); if(!post) return;
             document.getElementById('detailModalTitle').textContent = `#${String(post.index).padStart(3,'0')} - ${post.name}`;
             
-            // Siapkan gambar utama / galeri
             let imageSection = '';
             const images = post.images && post.images.length ? post.images : (post.image ? [post.image] : []);
             if(images.length > 1) {
-                // Galeri interaktif
                 const imageItems = images.map((img, idx) => 
                     `<img src="${escapeHTML(img)}" class="gallery-img" style="display:${idx===0?'block':'none'};" onerror="this.style.display='none'" alt="gambar ${idx+1}">`
                 ).join('');
@@ -299,17 +324,16 @@
                 <div class="detail-meta-grid">
                     <div class="detail-meta-item"><div class="meta-val">⭐ ${(post.rating||0).toFixed(1)}</div><div class="meta-lbl">Rating</div></div>
                     <div class="detail-meta-item"><div class="meta-val">${escapeHTML(post.version)}</div><div class="meta-lbl">Versi</div></div>
-                    <div class="detail-meta-item"><div class="meta-val">👤 ${escapeHTML(post.developer)}</div><div class="meta-lbl">Developer</div></div>
+                    <div class="detail-meta-item"><div class="meta-val clickable-dev" onclick="closeDetailModal(); searchDeveloper('${escapeHTML(post.developer||'')}')">👤 ${escapeHTML(post.developer||'')}</div><div class="meta-lbl">Developer</div></div>
                     <div class="detail-meta-item"><div class="meta-val">⬇️ ${formatNumber(post.downloadCount)}</div><div class="meta-lbl">Download</div></div>
                     <div class="detail-meta-item"><div class="meta-val">${getCategoryLabel(post.category)}</div><div class="meta-lbl">Kategori</div></div>
                     <div class="detail-meta-item"><div class="meta-val">#${String(post.index).padStart(3,'0')}</div><div class="meta-lbl">Indeks</div></div>
                 </div>
                 <p class="detail-desc"><strong>📝 Deskripsi Lengkap</strong><br>${escapeHTML(post.fullDescription || post.description)}</p>
-                ${(post.tags||[]).length ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">${post.tags.map(t=>`<span class="tag">#${escapeHTML(t)}</span>`).join('')}</div>` : ''}
+                ${(post.tags||[]).length ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">${post.tags.map(t=>`<span class="tag" onclick="closeDetailModal(); searchByTag('${escapeHTML(t)}')">#${escapeHTML(t)}</span>`).join('')}</div>` : ''}
                 ${post.downloadLink ? `<a href="${escapeHTML(post.downloadLink)}" target="_blank" class="btn btn-primary" style="display:inline-flex;margin-top:8px;">⬇️ Download Mod</a>` : '<span style="opacity:0.6;">🔗 Link tidak tersedia</span>'}
             `;
 
-            // Simpan data galeri sementara
             window._currentGalleryImages = images;
             window._currentGalleryIdx = 0;
 

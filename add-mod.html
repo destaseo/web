@@ -34,7 +34,7 @@
         .btn-outline{background:transparent;border:1.5px solid rgba(255,255,255,0.25);color:var(--text);}
         .btn-outline:hover{border-color:var(--accent);}
         .form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;flex-wrap:wrap;}
-        .image-preview{width:100%;height:120px;border-radius:var(--radius-xs);background:var(--bg3);margin-top:8px;display:flex;align-items:center;justify-content:center;color:var(--text3);background-size:contain;background-repeat:no-repeat;background-position:center;transition:var(--transition);}
+        .image-preview{width:100%;height:120px;border-radius:var(--radius-xs);background:var(--bg3);margin-top:8px;display:flex;align-items:center;justify-content:center;color:var(--text3);background-size:contain;background-repeat:no-repeat;background-position:center;}
         @media(max-width:500px){.form-container{padding:20px;}}
     </style>
 </head>
@@ -65,23 +65,19 @@
                 <div class="form-group"><label>⬇️ Jumlah Download</label><input type="number" id="downloadCount" value="0" min="0"></div>
             </div>
             <div class="form-group"><label>🏷️ Tags (pisahkan koma)</label><input type="text" id="tags" maxlength="150"></div>
-            
             <div class="form-group">
                 <label>🖼️ URL Gambar Banner (opsional)</label>
                 <input type="url" id="imageUrl" placeholder="https://...">
                 <div class="image-preview" id="imagePreview">🔍 Preview banner</div>
             </div>
-
             <div class="form-group">
                 <label>🖼️ Gambar Galeri Detail (URL, pisahkan dengan baris baru, max 5)</label>
-                <textarea id="galleryImages" rows="3" placeholder="https://...&#10;https://...&#10;https://..."></textarea>
+                <textarea id="galleryImages" rows="3" placeholder="https://...&#10;https://..."></textarea>
             </div>
-
             <div class="form-group">
                 <label>🌟 Icon Index (emoji atau URL ikon kecil, opsional)</label>
                 <input type="text" id="iconInput" placeholder="🎯 atau https://...">
             </div>
-
             <div class="form-actions">
                 <button type="button" class="btn btn-outline" onclick="logoutAdmin()">🚪 Logout</button>
                 <a href="index.html" class="btn btn-outline">← Kembali</a>
@@ -97,24 +93,16 @@
         }
 
         const STORAGE_KEY = 'modhub_data';
-        const defaultModData = [ /* fallback */ ];
-
         function loadExisting() {
             const stored = localStorage.getItem(STORAGE_KEY);
-            return stored ? JSON.parse(stored) : defaultModData.map((p,i) => ({...p, id:'mod_'+i+'_'+Date.now()}));
+            return stored ? JSON.parse(stored) : [];
         }
 
-        // Preview banner
         document.getElementById('imageUrl').addEventListener('input', function(){
             const url = this.value.trim();
             const preview = document.getElementById('imagePreview');
-            if(url) {
-                preview.style.backgroundImage = `url('${url}')`;
-                preview.textContent = '';
-            } else {
-                preview.style.backgroundImage = '';
-                preview.textContent = '🔍 Preview banner';
-            }
+            preview.style.backgroundImage = url ? `url('${url}')` : '';
+            preview.textContent = url ? '' : '🔍 Preview banner';
         });
 
         document.getElementById('modForm').addEventListener('submit', function(e) {
@@ -156,9 +144,6 @@
             sessionStorage.removeItem('admin');
             window.location.href = 'index.html';
         }
-    </script>
-</body>
-</html>        }
     </script>
 </body>
 </html>
